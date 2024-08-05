@@ -34,7 +34,7 @@
 
   // 内容区开启复制
   content_views = document.querySelector("#content_views")
-  content_views.replaceWith(content_views.cloneNode(true));
+  content_views?.replaceWith(content_views.cloneNode(true));
 
   // 功能一： 修改复制按钮，支持一键复制
   const buttons = Array.isArray($$(".hljs-button"))
@@ -120,4 +120,31 @@
       }
     });
   }
+
+  // 添加掘金复制代码支持
+  elmGetter.each('div[class="code-block-extension-copyCodeBtn"]', document, btn => {
+    // 移除点击事件
+    btn.setAttribute("onclick", "");
+
+    // 克隆按钮
+    elClone = btn.cloneNode(true);
+
+    // 添加样式，防止重复调用
+    elClone.classList.add("mystyle");
+
+    // 替回按钮
+    btn.parentNode.replaceChild(elClone, btn);
+
+    // 重新添加点击事件
+    elClone.addEventListener("click", (e) => {
+      // 实现复制
+      const parentPreBlock = e.target.closest("pre");
+      const codeBlock = $$("code", parentPreBlock);
+      copy(codeBlock.innerText);
+
+      autolog.log("复制成功", "success");
+      e.stopPropagation();
+      e.preventDefault();
+    });
+  });
 })();
